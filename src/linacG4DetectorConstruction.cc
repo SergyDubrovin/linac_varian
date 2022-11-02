@@ -95,7 +95,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
     G4double r[] = {1.3650 * cm, 1.3630 * cm, 1.3600 * cm, 1.3550 * cm, 1.3490 * cm,
                     1.3400 * cm, 1.3320 * cm, 1.3200 * cm, 1.3100 * cm, 1.2720 * cm,
-                    1.2460 * cm, 1.1940 * cm, 1.1550 * cm, 1.1220 * cm, 1.0940 * cm, 
+                    1.2460 * cm, 1.1940 * cm, 1.1550 * cm, 1.1220 * cm, 1.0940 * cm,
                     1.0400 * cm, 0.9940 * cm, 0.9570 * cm, 0.9500 * cm, 0.9460 * cm,
                     0.9420 * cm, 0.9380 * cm, 0.9270 * cm, 0.9160 * cm, 0.9050 * cm,
                     0.8860 * cm, 0.8490 * cm, 0.8090 * cm, 0.7690 * cm, 0.6910 * cm,
@@ -122,6 +122,38 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                       posFF,
                       logicFF,
                       "FF",
+                      logicEnv,
+                      false,
+                      0,
+                      checkOverlaps);
+
+    // Конус в FF
+    G4Material *FF_con_mat = nist->FindOrBuildMaterial("G4_AIR"); // !!!
+    G4ThreeVector posFFcon = G4ThreeVector(0, 0, 0);
+
+    G4double pRmin1 = 0 * cm,  pRMax1 = 1.050 * cm;
+    G4double pRmin2 = 0 * cm,  pRMax2 = 0 * cm;
+    G4double hz = 0.525 * cm;
+
+    G4VSolid *FF_con_solid =
+        new G4Cons("con in FF",
+                   pRmin1,
+                   pRMax1,
+                   pRmin2,
+                   pRMax2,
+                   hz,
+                   0.0 * deg,
+                   360 * deg);
+
+    G4LogicalVolume *logicCon_in_FF =
+        new G4LogicalVolume(FF_con_solid,
+                            FF_con_mat,
+                            "con in FF");
+
+    new G4PVPlacement(0,
+                      posFFcon,
+                      logicCon_in_FF,
+                      "con in FF",
                       logicEnv,
                       false,
                       0,

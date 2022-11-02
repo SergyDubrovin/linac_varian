@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     UI->ApplyCommand("/vis/open OGL");
     UI->ApplyCommand("/vis/drawVolume");
     UI->ApplyCommand("/vis/viewer/set/auxiliaryEdge true");
-    UI->ApplyCommand("/vis/viewer/set/lineSegmentsPerCircle 100");
+    // UI->ApplyCommand("/vis/viewer/set/lineSegmentsPerCircle 100");
 
     ui->SessionStart();
 
