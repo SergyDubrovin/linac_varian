@@ -100,7 +100,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                     0.068 * cm, 0.075 * cm, 0.068 * cm, 0.075 * cm, 0.090 * cm};
 
     // G4Polycone *solidFF = new G4Polycone("FF", 0.0 * deg, 360.0 * deg, nmbRZ, r, z);
-    G4GenericPolycone *solidFF = new G4GenericPolycone("FF", 0.0 * deg, 359.0 * deg, nmbRZ, r, z);
+    G4GenericPolycone *solidFF = new G4GenericPolycone("FF", 0.0 * deg, 360.0 * deg, nmbRZ, r, z);
 
     G4LogicalVolume *logicFF = new G4LogicalVolume(solidFF, FF_mat, "FF");
 
@@ -108,7 +108,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                       posFF,
                       logicFF,
                       "FF",
-                      logicFF,
+                      logicEnv,
                       false,
                       0,
                       checkOverlaps);
