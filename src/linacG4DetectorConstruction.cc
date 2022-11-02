@@ -91,16 +91,18 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
     // Polycon section shape
     // G4int nmbRZ = 41;
-    G4int nmbRZ = 10;
+    G4int nmbRZ = 15;
 
     G4double r[] = {1.3650 * cm, 1.3630 * cm, 1.3600 * cm, 1.3550 * cm, 1.3490 * cm,
-                    1.3400 * cm, 1.3320 * cm, 1.3200 * cm, 1.3100 * cm, 1.2720 * cm};
+                    1.3400 * cm, 1.3320 * cm, 1.3200 * cm, 1.3100 * cm, 1.2720 * cm,
+                    1.2460 * cm, 1.1940 * cm, 1.1550 * cm, 1.1220 * cm, 1.0940 * cm};
 
     G4double z[] = {0. * cm, 0.012 * cm, 0.033 * cm, 0.040 * cm, 0.050 * cm,
-                    0.068 * cm, 0.075 * cm, 0.068 * cm, 0.075 * cm, 0.090 * cm};
+                    0.068 * cm, 0.075 * cm, 0.068 * cm, 0.075 * cm, 0.090 * cm,
+                    0.100 * cm, 0.125 * cm, 0.150 * cm, 0.175 * cm, 0.200 * cm};
 
     // G4Polycone *solidFF = new G4Polycone("FF", 0.0 * deg, 360.0 * deg, nmbRZ, r, z);
-    G4GenericPolycone *solidFF = new G4GenericPolycone("FF", 0.0 * deg, 360.0 * deg, nmbRZ, r, z);
+    G4VSolid *solidFF = new G4GenericPolycone("FF", 0.0 * deg, 360.0 * deg, nmbRZ, r, z);
 
     G4LogicalVolume *logicFF = new G4LogicalVolume(solidFF, FF_mat, "FF");
 
