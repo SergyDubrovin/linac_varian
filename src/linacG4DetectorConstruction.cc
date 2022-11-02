@@ -75,34 +75,20 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     //
     G4Material *FF_mat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
     G4ThreeVector posFF = G4ThreeVector(0, 0, 0);
-    G4double FF_phimin = 0. * deg, FF_phimax = 360. * deg;
-    // G4int numZP = 5;
-    // G4double x[] = {
-    //     0.0 * cm,
-    //     0.012 * cm,
-    //     0.025 * cm,
-    //     0.033 * cm,
-    //     0.04 * cm};
-    // G4double y[] = {1.365 * cm,
-    //                 1.363 * cm,
-    //                 1.36 * cm,
-    //                 1.355 * cm,
-    //                 1.349 * cm};
-    // G4double y_0[] = {0.*cm, 0.*cm, 0.*cm, 0.*cm, 0.*cm};
+    G4double FF_phimin = 0.0 * deg, FF_phimax = 360.0 * deg;
+    G4int numZP = 3;
     
-    G4double numZPlanes = 5;
-    G4double rInner[] = { 0*cm, 0*cm, 0*cm, 0*cm, 0*cm, 0*cm, 0*cm, 0*cm, 0*cm};
-    G4double rOuter[] = { 0*cm, 10*cm, 10*cm, 5*cm , 5*cm, 10*cm , 10*cm , 2*cm, 2*cm};
-    G4double z[] = { 5*cm, 7*cm, 9*cm, 11*cm, 25*cm, 27*cm, 29*cm, 31*cm, 35*cm };
+    G4double zInner[] = {0.344*cm, 0.331*cm, 0.025*cm};
+
+    G4double rOuter[] = {0.0*cm, 0.047*cm, 0.093*cm}; 
 
     G4Polycone *solidFF = new G4Polycone(
         "flattering filter",
         FF_phimin,
         FF_phimax,
-        numZPlanes,
-        rInner,
-        rOuter, 
-        z);
+        numZP,
+        rOuter,
+        zInner);
 
     G4LogicalVolume* logicFF =
     new G4LogicalVolume(solidFF,         //its solid
