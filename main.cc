@@ -29,6 +29,8 @@ int main(int argc, char** argv)
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
     UI->ApplyCommand("/vis/open OGL");
     UI->ApplyCommand("/vis/drawVolume");
+    UI->ApplyCommand("/vis/viewer/set/auxiliaryEdge true");
+    UI->ApplyCommand("/vis/viewer/set/lineSegmentsPerCircle 100");
 
     ui->SessionStart();
 
