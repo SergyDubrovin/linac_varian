@@ -14,5 +14,16 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB header ${PROJECT_SOURCE_DIR}/include/*.hh)
 
+set(LINAC_SCRIPTS
+  vis.mac
+  )
+  foreach(_script ${LINAC_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()
+
 add_executable(linac_prog main.cc ${sources} ${headers})
 target_link_libraries(linac_prog ${Geant4_LIBRARIES})
