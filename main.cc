@@ -29,12 +29,12 @@ int main(int argc, char** argv)
     G4UImanager *UI = G4UImanager::GetUIpointer();
 
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
-    UI->ApplyCommand("/vis/open OGL");
+    // UI->ApplyCommand("/vis/open OGL");
     UI->ApplyCommand("/vis/drawVolume");
     // UI->ApplyCommand("/vis/scene/add/axes");
     UI->ApplyCommand("/vis/viewer/set/auxiliaryEdge true");
     // UI->ApplyCommand("/vis/viewer/set/lineSegmentsPerCircle 100");
-    // UI->ApplyCommand("/vis/open VRML2FILE");
+    UI->ApplyCommand("/vis/open VRML2FILE");
 
 
     ui->SessionStart();

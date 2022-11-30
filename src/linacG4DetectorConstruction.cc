@@ -10,16 +10,20 @@
 #include "G4Sphere.hh"           // Сфера
 #include "G4Orb.hh"              // Полная сфера
 #include "G4Tubs.hh"             // Цилиндр
-#include "G4Polycone.hh"         //
+#include "G4Polycone.hh"         // Фигура вращения (r_r0_z)
 #include "G4SubtractionSolid.hh" // Вычет объемов
 #include "G4UnionSolid.hh"       // Объединение объемов
-#include "G4GenericPolycone.hh"  //
-#include "G4LogicalVolume.hh"    //
-#include "G4PVPlacement.hh"      //
-#include "G4SystemOfUnits.hh"    //
+#include "G4GenericPolycone.hh"  // Фигура вращения (r_z)
+#include "G4LogicalVolume.hh"    // Логический объем
+#include "G4VPhysicalVolume.hh"  // Физический объем
 #include "G4RotationMatrix.hh"   // Изменение положения
 #include "G4Transform3D.hh"      // Изменение положения
-#include <array>
+#include "G4VisAttributes.hh"    // Визуализация (дополнтиельные функции)
+#include "G4VSolid.hh"           // Общий объем
+#include "G4PVPlacement.hh"      // Объем с помещением
+#include "G4SystemOfUnits.hh"    // Сантиметры и проч.
+
+//////////////////////////////////////////
 
 DetectorConstruction::DetectorConstruction()
 {
@@ -31,31 +35,52 @@ DetectorConstruction::~DetectorConstruction()
 
 G4VPhysicalVolume *DetectorConstruction::Construct()
 {
+    // Видимость, цвета
+    G4Colour brown(0.7, 0.4, 0.1);
+    G4Colour yellow(1., 1., 0.);
+    G4Colour red(1., 0., 0.);
+    G4Colour silver(192., 192., 192.);
+    G4Colour green(0., 1., 0);
+    G4Colour blue(0., 0., 1.);
+    G4VisAttributes *invsible_world = new G4VisAttributes(0);
+    G4VisAttributes *Pk_silver = new G4VisAttributes(silver);
+    G4VisAttributes *Pc_green = new G4VisAttributes(green);
+    G4VisAttributes *brown_uk = new G4VisAttributes(brown);
+    G4VisAttributes *yellow_uk = new G4VisAttributes(yellow);
+    G4VisAttributes *blue_uk = new G4VisAttributes(blue);
+
     // Подплючение материалов
     G4NistManager *nist = G4NistManager::Instance();
 
-    // Включение/выключения проверки перекрытия объемов
-    G4bool checkOverlaps = true;
-
-    // Параметры World /////////////////////////////////////////////////////
-    G4double world_sizeXY = 90 * cm;
-    G4double world_sizeZ = 150 * cm;
-    // Материал
+    // Материалы
     G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
     G4Material *primarycollimator_mt = nist->FindOrBuildMaterial("G4_W");
     G4Material *sphere_mt = nist->FindOrBuildMaterial("G4_W");
     G4Material *VWCyl = nist->FindOrBuildMaterial("G4_Be");
     G4Material *FF_mat = nist->FindOrBuildMaterial("G4_STAINLESS-STEEL ");
     G4Material *mlc_mat_1 = nist->FindOrBuildMaterial("G4_W");
+
+    // Включение/выключения проверки перекрытия объемов
+    constexpr auto checkOverlaps = true;
+
+    ////////////////////////////////////////////////////////////////////////
+    // Параметры World /////////////////////////////////////////////////////
+    constexpr auto world_sizeXY = 90 * cm;
+    constexpr auto world_sizeZ = 150 * cm;
+
     // Геометрический объем
-    G4Box *solidWorld = new G4Box("World", // Название
-                                  world_sizeXY,
-                                  world_sizeXY,
-                                  world_sizeZ);
+    G4Box *solidWorld =
+        new G4Box("World", // Название
+                  world_sizeXY,
+                  world_sizeXY,
+                  world_sizeZ);
     // Логический объем
-    G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld,
-                                                      world_mat,
-                                                      "World");
+    G4LogicalVolume *logicWorld =
+        new G4LogicalVolume(solidWorld,
+                            world_mat,
+                            "World");
+
+    logicWorld->SetVisAttributes(invsible_world);
     // Физический объем
     G4VPhysicalVolume *physWorld =
         new G4PVPlacement(0,
@@ -69,21 +94,19 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                                            ////////
     ////////////////////////////////////////////////////////////////////////
     // Общие параметры
-    G4double Phi_0 = 0. * deg;
-    // G4double Phi_360 = 360. * deg;
-    // G4double Phi_240 = 240. * deg;
-    G4double Phi_max = 240. * deg;
+    constexpr auto Phi_0 = 0. * deg;
+    constexpr auto Phi_max = 180 * deg;
 
     // Параметры Primary Collimator ///////////////////////////////////////
     // Часть  1
     // Геометрия цилиндра
-    G4double ch1_cyl_pRMax = 5. * cm;  // !!!!
-    G4double ch1_cyl_pRMin = 0.5 * cm; // !!!!
-    G4double ch1_cyl_pDz = 10. * cm;   // !!!!
+    constexpr auto ch1_cyl_pRMax = 5. * cm;  // !!!!
+    constexpr auto ch1_cyl_pRMin = 0.5 * cm; // !!!!
+    constexpr auto ch1_cyl_pDz = 10. * cm;   // !!!!
 
-    G4double ch1_cyl2_pRMax = 5.2 * cm; // !!!!
-    G4double ch1_cyl2_pRMin = 4.4 * cm; // !!!!
-    G4double ch1_cyl2_pDz = 4. * cm;    // !!!!
+    constexpr auto ch1_cyl2_pRMax = 5.2 * cm; // !!!!
+    constexpr auto ch1_cyl2_pRMin = 4.4 * cm; // !!!!
+    constexpr auto ch1_cyl2_pDz = 4. * cm;    // !!!!
 
     G4Tubs *ch1_cyl_geom = new G4Tubs("ch_1_cyl",
                                       ch1_cyl_pRMin,
@@ -99,17 +122,17 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                                        Phi_0,
                                        Phi_max);
     // Сфера, которую вставляем
-    G4double ch1_sphere_pRmax = 2. * cm; // !!!
+    constexpr auto ch1_sphere_pRmax = 2. * cm; // !!!
 
     G4Orb *ch1_sphere_geom = new G4Orb("ch_1_sph",
                                        ch1_sphere_pRmax);
 
     // Конус, который вставляем в сh_1
-    G4double ch1_con_pRmin1 = 0. * cm;
-    G4double ch1_con_pRmax1 = 0. * cm;
-    G4double ch1_con_pRmin2 = 0. * cm;
-    G4double ch1_con_pRmax2 = 4.18 * cm;
-    G4double ch1_con_pDz = 8. * cm;
+    constexpr auto ch1_con_pRmin1 = 0. * cm;
+    constexpr auto ch1_con_pRmax1 = 0. * cm;
+    constexpr auto ch1_con_pRmin2 = 0. * cm;
+    constexpr auto ch1_con_pRmax2 = 4.18 * cm;
+    constexpr auto ch1_con_pDz = 8. * cm;
 
     G4Cons *ch1_cons_geom = new G4Cons("ch_1 cons",
                                        ch1_con_pRmin1,
@@ -157,6 +180,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
         new G4LogicalVolume(primarycollimator,
                             primarycollimator_mt,
                             "Primary collimator");
+    logicPrimarycollimator->SetVisAttributes(Pk_silver);
 
     // Физический объем
     new G4PVPlacement(0,                      // без поворота
@@ -178,6 +202,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
         new G4LogicalVolume(PMsphere_geom,
                             sphere_mt,
                             "Sphere in primary collimator");
+
+    LogicPmSphere->SetVisAttributes(Pc_green);
 
     new G4PVPlacement(0,                              // без поворота
                       G4ThreeVector(0, 0, 7 * cm),    // Расположение
@@ -208,6 +234,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
         new G4LogicalVolume(TubVm_ch1,
                             VWCyl,
                             "Tube is vacuum window");
+
+     LogicCylVM_ch1->SetVisAttributes(brown_uk);
 
     new G4PVPlacement(0,                            // без поворота
                       G4ThreeVector(0, 0, 12 * cm), // Расположение
@@ -266,10 +294,13 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                                TubVm_ch2_r2,
                                transformVM);
 
+
     G4LogicalVolume *LogicCylVM_ch2 =
         new G4LogicalVolume(substration_Tub_Tubr2,
                             VWCyl,
                             "Tube is vacuum window");
+
+    LogicCylVM_ch2->SetVisAttributes(yellow_uk);
 
     new G4PVPlacement(0,                            // без поворота
                       G4ThreeVector(0, 0, 11 * cm), // Расположение
@@ -469,6 +500,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                             mlc_mat_1,
                             "MlcRightBox");
 
+    LogicMlcRightBox->SetVisAttributes(blue_uk);
+
     new G4PVPlacement(0,                                    // без поворота
                       G4ThreeVector(0, 6.50 * cm, 50 * cm), // Расположение
                       LogicMlcRightBox,                     // Логический объем
@@ -494,10 +527,13 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                                MlcRightBox_r, transform_mlc1);
 
 
+
     G4LogicalVolume *LogicMlcLeftBox =
         new G4LogicalVolume(MlcLeftBox_subs_Box1,
                             mlc_mat_1,
                             "MlcLeftBox");
+
+    LogicMlcLeftBox->SetVisAttributes(blue_uk);
 
     new G4PVPlacement(0,                                     // без поворота
                       G4ThreeVector(0, -6.50 * cm, 50 * cm), // Расположение
@@ -507,11 +543,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
                       false,                                 // без булевых операций
                       0,                                     // Номер копии
                       checkOverlaps);                        // Проверка
-    // Part 2 
-    // constexpr auto mlc_weight_1 = 
-    // constexpr auto mlc_weight_1 = 
+    // Part 2
+    // constexpr auto mlc_weight_1 =
+    // constexpr auto mlc_weight_1 =
 
-    // G4Box* Mlcplans1 = 
+    // G4Box* Mlcplans1 =
     //     new G4Box()
 
     return physWorld;
